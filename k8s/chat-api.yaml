@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-api
+  namespace: nutri-veda
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chat-api
+  template:
+    metadata:
+      labels:
+        app: chat-api
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: chat-api
+        image: chat-api:1.0.0
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ASPNETCORE_URLS
+          value: http://0.0.0.0:8080
+        - name: ConnectionStrings__Default
+          valueFrom:
+            secretKeyRef:
+              name: db-conn
+              key: ConnectionStrings__Default
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+            ephemeral-storage: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-api
+  namespace: nutri-veda
+spec:
+  selector:
+    app: chat-api
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: ClusterIP

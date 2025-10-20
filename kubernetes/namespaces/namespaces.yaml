@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nutri-veda-dev
+  labels:
+    environment: dev
+    project: nutri-veda
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nutri-veda-staging
+  labels:
+    environment: staging
+    project: nutri-veda
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nutri-veda-prod
+  labels:
+    environment: prod
+    project: nutri-veda
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+  labels:
+    purpose: monitoring

@@ -1,0 +1,50 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+!terraform.tfvars.example
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraform/
+.terraform.lock.hcl
+tfplan
+
+# Azure
+.azure/
+*.azureauth
+
+# Kubernetes
+kubernetes/secrets/*.yaml
+!kubernetes/secrets/*.yaml.example
+kubeconfig
+
+# Diretórios de sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+.vagrant/
+nutri-veda/
+
+# Arquivos temporários
+*.tmp
+*.swp
+*.bak
+*.backup
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Credenciais
+credentials.json
+*.pem
+*.key
+.env
+.env.local

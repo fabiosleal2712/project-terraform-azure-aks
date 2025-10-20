@@ -1,0 +1,65 @@
+# Arquivo de exemplo para variáveis do OpenTofu/Terraform
+# Copie este arquivo para terraform.tfvars e preencha com seus valores reais
+
+# Credenciais AWS (recomendado usar AWS CLI ou IAM roles ao invés de hardcode)
+aws_access_key = "YOUR_AWS_ACCESS_KEY"
+aws_secret_key = "YOUR_AWS_SECRET_KEY"
+
+# AMI ID - Amazon Linux 2 em us-east-1 (atualize conforme necessário)
+ami_id = "ami-0c55b159cbfafe1d0"  # Amazon Linux 2
+
+# Tipo de instância
+instance_type = "t3.micro"
+
+# IDs das subnets (serão criadas automaticamente pelo módulo VPC)
+subnet_ids = []
+
+# Caminho do provedor
+provider_path = "/usr/bin/tofu"
+
+# ARN da role do cluster EKS (você precisa criar essa role primeiro)
+cluster_role_arn = "arn:aws:iam::YOUR_ACCOUNT_ID:role/eks-cluster-service-role"
+
+# Nome do cluster EKS
+# Configurações do Projeto
+project_name = "myaksproject"
+environment  = "dev"
+
+# Localização Azure
+location           = "brazilsouth"
+location_secondary = "eastus2"
+
+# Network Configuration
+vnet_address_space          = ["10.0.0.0/16"]
+aks_subnet_address_prefix   = ["10.0.1.0/24"]
+appgw_subnet_address_prefix = ["10.0.2.0/24"]
+
+# AKS Configuration
+kubernetes_version      = "1.28.3"
+aks_node_count         = 2
+aks_node_vm_size       = "Standard_D2s_v3"
+aks_enable_auto_scaling = true
+aks_min_count          = 1
+aks_max_count          = 5
+aks_max_pods           = 30
+aks_os_disk_size_gb    = 128
+
+# ACR Configuration
+acr_sku = "Standard"
+
+# Monitoring
+log_analytics_retention_days = 30
+
+# Security
+allowed_ip_ranges = ["0.0.0.0/0"] # Alterar para IPs específicos em produção!
+
+# Tags
+tags = {
+  ManagedBy   = "Terraform"
+  Project     = "AKS Infrastructure"
+  Environment = "dev"
+  CostCenter  = "Engineering"
+}
+
+# ARN do principal (substitua pelo seu account ID)
+principal_arn = "arn:aws:iam::YOUR_ACCOUNT_ID:root"
