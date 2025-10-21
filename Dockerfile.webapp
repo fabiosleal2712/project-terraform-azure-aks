@@ -1,0 +1,27 @@
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+COPY ./niu-nutri/ ./
+RUN dotnet publish ./src/Apps/WebApp/Niu.Nutri.WebApp/Niu.Nutri.WebApp \
+    -c Release \
+    --os linux \
+    --arch x64 \
+    -p:PublishTrimmed=false \
+    -o /niunutri/volumes/WebApp
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /niunutri/volumes/WebApp .
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends telnet iputils-ping && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create directory for DataProtection keys
+RUN mkdir -p /tmp/keys && chmod 755 /tmp/keys
+
+ENTRYPOINT ["dotnet", "Niu.Nutri.WebApp.dll"]
+

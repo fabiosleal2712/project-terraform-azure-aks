@@ -1,0 +1,41 @@
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+COPY ./niu-nutri/ ./
+RUN dotnet publish ./src/Apps/Dashboards/Adm.Dashboard.WebApp \
+    -c Release \
+    --os linux \
+    --arch x64 \
+    -p:PublishTrimmed=false \
+    -o /niunutri/volumes/Dashboard
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /niunutri/volumes/Dashboard .
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends telnet iputils-ping curl netcat-openbsd net-tools && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Remove certificate configuration completely - desenvolvimento HTTP only
+# COPY aspnetapp.pfx /https/aspnetapp.pfx
+# RUN mkdir -p /https && chmod 600 /https/aspnetapp.pfx
+
+# Create directory for DataProtection keys
+RUN mkdir -p /tmp/keys && chmod 755 /tmp/keys
+
+# Add logging configuration for debugging
+ENV Logging__LogLevel__Default=Information
+ENV Logging__LogLevel__Microsoft.AspNetCore=Warning
+
+# Garantir que o Kestrel escute na porta 80 (HTTP) em todas as interfaces
+ENV ASPNETCORE_URLS=http://0.0.0.0:80
+
+# Add health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:80/ || exit 1
+
+ENTRYPOINT ["dotnet", "Adm.Dashboard.WebApp.dll"]

@@ -1,0 +1,25 @@
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+COPY ./nutri-veda/ ./
+RUN dotnet publish ./src/Chat/Chat.Api \
+	-c Release \
+	--os linux \
+	--arch x64 \
+	-p:PublishTrimmed=false \
+	-o /niunutri/volume/ChatApi
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /niunutri/volume/ChatApi .
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends telnet iputils-ping && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+# Certificate is managed by Ingress/AppGW - commented out
+# COPY aspnetapp.pfx /https/aspnetapp.pfx
+# RUN mkdir -p /https && chmod 600 /https/aspnetapp.pfx
+ENTRYPOINT ["dotnet", "Chat.Api.dll"]

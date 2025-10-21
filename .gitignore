@@ -48,3 +48,5 @@ credentials.json
 *.key
 .env
 .env.local
+# AWS modules backup
+.aws-modules-backup/

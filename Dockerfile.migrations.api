@@ -1,0 +1,24 @@
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+COPY ./niu-nutri/ ./
+RUN dotnet publish ./src/Migrations/Migrations.Api \
+	-c Release \
+	--os linux \
+	--arch x64 \
+	-p:PublishTrimmed=false \
+	-o /niunutri/volume/MigrationsApi
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /niunutri/volume/MigrationsApi .
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends telnet iputils-ping && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+COPY aspnetapp.pfx /https/aspnetapp.pfx
+RUN mkdir -p /https && chmod 600 /https/aspnetapp.pfx
+ENTRYPOINT ["dotnet", "Migrations.Api.dll"]

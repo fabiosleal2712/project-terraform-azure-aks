@@ -4,15 +4,15 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.80.0"
+      version = "~> 4.0"
     }
     azuread = {
       source  = "hashicorp/azuread"
-      version = "~> 2.45.0"
+      version = "~> 3.0"
     }
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.5.0"
+      version = "~> 3.6"
     }
   }
 
@@ -26,16 +26,19 @@ terraform {
 }
 
 provider "azurerm" {
-  skip_provider_registration = true  # Necessário para subscriptions gratuitas/limitadas
-  
+  subscription_id            = "2febf03a-7aa7-433d-938e-6351f2b27d1c"
+  skip_provider_registration = true # Evita tentar registrar providers não disponíveis
+
   features {
     resource_group {
       prevent_deletion_if_contains_resources = false
     }
-    
+
     key_vault {
       purge_soft_delete_on_destroy    = true
       recover_soft_deleted_key_vaults = true
     }
   }
-}provider "azuread" {}
+}
+
+provider "azuread" {}

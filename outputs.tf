@@ -123,3 +123,35 @@ output "acr_login_command" {
   description = "Comando para login no ACR"
   value       = "az acr login --name ${azurerm_container_registry.main.name}"
 }
+
+# Database (PostgreSQL) - Descomentar quando provisionar
+# output "postgres_server_fqdn" {
+#   description = "FQDN do servidor PostgreSQL"
+#   value       = module.postgresql.server_fqdn
+# }
+#
+# output "postgres_server_name" {
+#   description = "Nome do servidor PostgreSQL"
+#   value       = module.postgresql.server_name
+# }
+#
+# output "postgres_database_name" {
+#   description = "Nome do database PostgreSQL"
+#   value       = module.postgresql.database_name
+# }
+#
+# output "postgres_connection_string" {
+#   description = "Connection string do PostgreSQL (sem senha)"
+#   value       = module.postgresql.connection_string
+#   sensitive   = false
+# }
+#
+# output "postgres_admin_username" {
+#   description = "Username do administrador do PostgreSQL"
+#   value       = module.postgresql.administrator_login
+# }
+#
+# output "postgres_connection_command" {
+#   description = "Comando para conectar ao PostgreSQL via psql"
+#   value       = "psql \"host=${module.postgresql.server_fqdn} port=5432 dbname=${module.postgresql.database_name} user=${module.postgresql.administrator_login} sslmode=require\""
+# }

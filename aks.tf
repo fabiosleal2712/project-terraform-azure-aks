@@ -38,27 +38,21 @@ resource "azurerm_kubernetes_cluster" "main" {
 
   # Node Pool Padrão
   default_node_pool {
-    name                = "default"
-    node_count          = var.aks_enable_auto_scaling ? null : var.aks_node_count
-    vm_size             = var.aks_node_vm_size
-    os_disk_size_gb     = var.aks_os_disk_size_gb
-    vnet_subnet_id      = azurerm_subnet.aks.id
-    max_pods            = var.aks_max_pods
-    enable_auto_scaling = var.aks_enable_auto_scaling
-    min_count           = var.aks_enable_auto_scaling ? var.aks_min_count : null
-    max_count           = var.aks_enable_auto_scaling ? var.aks_max_count : null
-    type                = "VirtualMachineScaleSets"
+    name                 = "default"
+    node_count           = var.aks_enable_auto_scaling ? null : var.aks_node_count
+    vm_size              = var.aks_node_vm_size
+    os_disk_size_gb      = var.aks_os_disk_size_gb
+    vnet_subnet_id       = azurerm_subnet.aks.id
+    max_pods             = var.aks_max_pods
+    auto_scaling_enabled = var.aks_enable_auto_scaling
+    min_count            = var.aks_enable_auto_scaling ? var.aks_min_count : null
+    max_count            = var.aks_enable_auto_scaling ? var.aks_max_count : null
 
     upgrade_settings {
-      max_surge = "33%"
+      max_surge                     = "33%"
+      drain_timeout_in_minutes      = 30
+      node_soak_duration_in_minutes = 0
     }
-
-    tags = merge(
-      var.tags,
-      {
-        Environment = var.environment
-      }
-    )
   }
 
   # Identidade
@@ -82,7 +76,6 @@ resource "azurerm_kubernetes_cluster" "main" {
 
   # Azure AD Integration
   azure_active_directory_role_based_access_control {
-    managed                = true
     azure_rbac_enabled     = true
     admin_group_object_ids = []
   }
@@ -141,7 +134,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "workload" {
   kubernetes_cluster_id = azurerm_kubernetes_cluster.main.id
   vm_size               = "Standard_D4s_v3"
   node_count            = 2
-  enable_auto_scaling   = true
+  auto_scaling_enabled  = true
   min_count             = 1
   max_count             = 5
   max_pods              = 30
@@ -150,6 +143,12 @@ resource "azurerm_kubernetes_cluster_node_pool" "workload" {
 
   node_labels = {
     "workload-type" = "application"
+  }
+
+  upgrade_settings {
+    max_surge                     = "33%"
+    drain_timeout_in_minutes      = 30
+    node_soak_duration_in_minutes = 0
   }
 
   tags = merge(

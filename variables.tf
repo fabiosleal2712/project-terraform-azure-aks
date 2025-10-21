@@ -67,7 +67,7 @@ variable "aks_node_count" {
 variable "aks_node_vm_size" {
   description = "Tamanho da VM dos nodes"
   type        = string
-  default     = "Standard_D2s_v3"
+  default     = "Standard_D2s_v6"
 }
 
 variable "aks_enable_auto_scaling" {
@@ -134,4 +134,66 @@ variable "allowed_ip_ranges" {
   description = "Ranges de IP permitidos para acesso ao cluster"
   type        = list(string)
   default     = ["0.0.0.0/0"] # Alterar em produção!
+}
+
+# Database Variables
+variable "db_admin_username" {
+  description = "Username do administrador do PostgreSQL"
+  type        = string
+  default     = "psqladmin"
+}
+
+variable "db_admin_password" {
+  description = "Senha do administrador do PostgreSQL (mínimo 8 caracteres)"
+  type        = string
+  sensitive   = true
+  default     = null # Deve ser fornecida via terraform.tfvars ou variável de ambiente
+}
+
+variable "db_sku_name" {
+  description = "SKU do PostgreSQL (B_Standard_B1ms para dev, GP_Standard_D2s_v3 para prod)"
+  type        = string
+  default     = "B_Standard_B1ms"
+}
+
+variable "db_storage_mb" {
+  description = "Armazenamento do PostgreSQL em MB"
+  type        = number
+  default     = 32768 # 32 GB
+}
+
+variable "db_postgres_version" {
+  description = "Versão do PostgreSQL"
+  type        = string
+  default     = "16"
+}
+
+variable "db_backup_retention_days" {
+  description = "Dias de retenção de backup"
+  type        = number
+  default     = 7
+}
+
+variable "db_geo_redundant_backup" {
+  description = "Habilitar backup geo-redundante"
+  type        = bool
+  default     = false
+}
+
+variable "db_high_availability_enabled" {
+  description = "Habilitar alta disponibilidade (custa mais)"
+  type        = bool
+  default     = false
+}
+
+variable "db_standby_zone" {
+  description = "Zona de disponibilidade para standby"
+  type        = string
+  default     = "2"
+}
+
+variable "db_database_name" {
+  description = "Nome do database"
+  type        = string
+  default     = "nutrivedadb"
 }
